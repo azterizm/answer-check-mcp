@@ -1,0 +1,53 @@
+[project]
+name = "answer-check-mcp"
+version = "0.1.0"
+description = "An MCP server that checks an AI agent's draft answer against its sources: figures, dates, citations and must/may wording, sentence by sentence, with no model call."
+readme = "README.md"
+authors = [
+    { name = "Abdullah Memon", email = "abdullah@memonsystems.com" }
+]
+requires-python = ">=3.12"
+license = "AGPL-3.0-only"
+license-files = ["LICENSE"]
+keywords = ["mcp", "llm", "agents", "verification", "hallucination", "rag", "grounding"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "legal-rag-verifier>=0.4,<0.5",
+    "mcp>=2.3,<3",
+]
+
+[project.urls]
+Homepage = "https://github.com/azterizm/answer-check-mcp"
+Issues = "https://github.com/azterizm/answer-check-mcp/issues"
+
+[project.scripts]
+answer-check-mcp = "answer_check_mcp:main"
+
+[project.optional-dependencies]
+router = [
+    "legal-rag-router>=0.1.1,<0.2",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.6,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "anyio>=4.15.1",
+    "pytest>=9.2.0",
+    "ruff>=0.17.3",
+]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

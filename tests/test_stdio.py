@@ -1,0 +1,28 @@
+"""The installed command, launched over stdio the way an MCP host such as Claude Code runs it."""
+
+from __future__ import annotations
+
+import shutil
+
+import pytest
+from mcp import Client, StdioServerParameters
+
+pytestmark = pytest.mark.anyio
+
+
+async def test_the_installed_command_serves_check_answer_over_stdio() -> None:
+    command = shutil.which("answer-check-mcp")
+    assert command, "install the package first: uv sync"
+
+    async with Client(StdioServerParameters(command=command)) as client:
+        result = await client.call_tool(
+            "check_answer",
+            {
+                "answer": "The Pro plan costs $25 a month.",
+                "sources": [{"text": "The Pro plan costs $20 a month."}],
+            },
+        )
+
+    assert result.structured_content is not None
+    assert result.structured_content["passed"] is False
+    assert result.structured_content["sentences"][0]["suggested"] == ["$20"]
