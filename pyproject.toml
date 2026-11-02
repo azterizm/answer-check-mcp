@@ -19,7 +19,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 dependencies = [
-    "legal-rag-verifier>=0.4,<0.5",
+    "legal-rag-verifier>=0.5,<0.6",
     "mcp>=2.3,<3",
 ]
 
