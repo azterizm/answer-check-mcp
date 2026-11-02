@@ -1,7 +1,7 @@
 [project]
 name = "answer-check-mcp"
-version = "0.1.0"
-description = "An MCP server that checks an AI agent's draft answer against its sources: figures, dates, citations and must/may wording, sentence by sentence, with no model call."
+version = "0.2.0"
+description = "An MCP server that checks an AI agent's draft answer against its sources: figures, dates, citations and must/may wording, sentence by sentence; an optional LLM judge reads the prose."
 readme = "README.md"
 authors = [
     { name = "Abdullah Memon", email = "abdullah@memonsystems.com" }
