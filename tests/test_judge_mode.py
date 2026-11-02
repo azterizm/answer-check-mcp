@@ -327,6 +327,20 @@ async def test_key_is_sent_and_never_leaks_to_outputs_or_errors(
     assert SECRET not in str(probe_error.value)
 
 
+def test_probe_error_redacts_a_key_echoed_by_the_endpoint(
+    judge_stub: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("ANSWER_CHECK_TEST_KEY", SECRET)
+    judge_stub.models = [SECRET, "other-model"]
+
+    with pytest.raises(server.JudgeUnavailable) as probe_error:
+        server.build_server(judge=_settings(judge_stub, api_key_env="ANSWER_CHECK_TEST_KEY"))
+
+    message = str(probe_error.value)
+    assert SECRET not in message
+    assert "[redacted]" in message
+
+
 async def test_one_failed_judge_call_scores_not_stated_and_is_counted(judge_stub: Any) -> None:
     judge_stub.script = [500, 500, 500, "supported"]
     report = await _checked(_settings(judge_stub), f"{PROSE} It includes 5 seats.")
