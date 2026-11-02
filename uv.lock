@@ -17,7 +17,7 @@ wheels = [
 
 [[package]]
 name = "answer-check-mcp"
-version = "0.1.0"
+version = "0.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "legal-rag-verifier" },
@@ -39,7 +39,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "legal-rag-router", marker = "extra == 'router'", specifier = ">=0.1.1,<0.2" },
-    { name = "legal-rag-verifier", specifier = ">=0.4,<0.5" },
+    { name = "legal-rag-verifier", specifier = ">=0.5,<0.6" },
     { name = "mcp", specifier = ">=2.3,<3" },
 ]
 provides-extras = ["router"]
@@ -343,11 +343,11 @@ wheels = [
 
 [[package]]
 name = "legal-rag-verifier"
-version = "0.4.0"
+version = "0.5.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/ff/8b/2fcd854ba6b2f76e9f9865dbb2a0ce222f8b94235ced144d2507a703eb00/legal_rag_verifier-0.4.0.tar.gz", hash = "sha256:3806861adaa07dcaf3cd9fe75ec1d575694bf3dddfd1ddc8c188ee52faf02be6", size = 515097, upload-time = "2026-10-23T12:19:07.101Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/3a/1f/e3f0f5d0d4db1827170983c5622ffdbf0902e37d9a578ae14abd75c50a41/legal_rag_verifier-0.5.0.tar.gz", hash = "sha256:bea4724f1a02cee9d9f2e4009c8766b94b990c72bee5f6b2981a2d6e8cf87ad8", size = 557711, upload-time = "2026-11-02T09:42:52.737Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/74/8e/a0740e3a76ef7c171be1efb0571700ae8cdbe308d6224fbdaa3833c44af3/legal_rag_verifier-0.4.0-py3-none-any.whl", hash = "sha256:1d3108a599af6d1826137d836cb396bdcdeba96a06b2346b77ce60f55aefc65b", size = 74316, upload-time = "2026-10-23T12:19:05.63Z" },
+    { url = "https://files.pythonhosted.org/packages/cf/dc/9efc6ce891ab24b6c35cc84d1dbab02cf8d6048e34c8d2c8d4b58de03e25/legal_rag_verifier-0.5.0-py3-none-any.whl", hash = "sha256:12022caf9188e647eedee4ce44728ebf7423e28d3bb32349cfb1c00d6f608c4d", size = 84146, upload-time = "2026-11-02T09:42:51.133Z" },
 ]
 
 [[package]]

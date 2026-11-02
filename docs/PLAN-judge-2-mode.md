@@ -1,8 +1,9 @@
 # Plan, phase 2 of 3: an optional judge mode (0.2.0)
 
-Status: plan only, written 2026-11-01. Nothing is built. It depends on phase 1, the judge module in
-`legal-rag-verifier` 0.5.0 (`legal-rag-verifier/docs/PLAN-judge-1-module.md`). This repository's tests are in
-`docs/PLAN-judge-3-testing.md`. Decisions marked ⛔ need your go.
+Status: written 2026-11-01; decisions taken 2026-11-02; work in progress on branch `judge-mode`.
+It depends on phase 1, the judge module in `legal-rag-verifier` 0.5.0
+(`legal-rag-verifier/docs/PLAN-judge-1-module.md`). This repository's tests are in
+`docs/PLAN-judge-3-testing.md`.
 
 ## Goal
 
@@ -23,6 +24,8 @@ network.
 
 Recommendation: (a) as the only judge mode in 0.2.0. (b) is not built until a measurement backs it.
 
+**Answer (2026-11-02):** (a), the measured configuration, `STRICT_FIGURES`, is the only judge mode.
+
 ### 2. The limit on answers written with sources
 
 An MCP agent usually writes with its sources in hand. On such answers in the verifier's second fresh test, every
@@ -34,6 +37,78 @@ Proposal: the README states both findings beside the accuracy figure. It describ
 agent mixes its own knowledge with the sources, and says a judge can add false rejections on answers that stay close
 to their sources.
 
+**Answer (2026-11-02):** the README uses the proposed text: judge mode is most useful when the agent mixes its own
+knowledge with the sources, and a judge can add false rejections on answers that stay close to their sources.
+
+## Decisions made while planning (2026-11-02)
+
+### 3. Wrong figures
+
+Verdicts stay as measured, and `suggested` is filled back in. When the judge rejects a sentence with a figure it was
+sent, a claims-only `Verifier()` pass on that sentence supplies the source value. This makes no model call.
+
+Evidence: GRID stop 52 E2 gained 8 and lost 0. GRID stop 56 P3 gained 3 and lost 1. Design decision D-a fixes the
+trigger: the claims-only pass must find `UNGROUNDED_FIGURE`, because a judge-rejected wrong figure carries
+`NLI_CONTRADICTION`.
+
+### 4. Preset and model
+
+`--judge-url` alone uses `qwen27-ar4` (`measured: true`). `--judge-model` sets up a custom judge (`measured: false`),
+with the short reply, `STRICT_FIGURES`, the server's default sampling and no template arguments. Both flags together,
+or either flag without `--judge-url`, is an error at start.
+
+### 5. Past the cap
+
+Past `--judge-max-calls`, the claim check still runs, matching 0.1.0 behaviour. Wrong figures and citations stay
+unsupported, with suggestions. The rest are `unchecked`. Each such sentence gets this detail:
+"judge cap of N calls reached; not judged".
+
+### 7. Three measured presets, two defined in this repo
+
+`--judge-preset` accepts the library's `PRESETS` plus two local presets, each built as a
+`legal_rag_verifier.judge.Preset`. The keys follow `scripts/modal_distill.py` and the label files.
+
+| Key | Model @ revision | Reply | Server and sampling | Figures (fresh 1 / fresh 2) |
+|---|---|---|---|---|
+| `qwen27-ar4` (library, the default) | `Vishva007/Qwen3.8-27B-W4A16-AutoRound-GPTQ@1b9d56b428e9f841d7ad566f87660b5f47553c97` | short | as in the library | 93.8% / 90.1%, 0.54 s |
+| `gemma4-e4b` (local) | `google/gemma-4-E4B-it@ee0ef6023621cff504d758262d4e04895a5af4a2` | short (`SHORT_SHA`) | SGLang 0.5.21, `--context-length 65536`, one L40S; temperature 1.0, top_p 0.95, top_k 64, max_tokens 1024, seed 0; `enable_thinking: False` | 86.4% (16 false rollbacks / 116 caught) / 85.4% (9 / 54), 0.41 s |
+| `qwen27-nothink` (local) | `Qwen/Qwen3.8-27B-FP8@017b9c7af6b5689d5dd426a76e0bc077eb5ca20a` | full (`PROMPT_SHA`) | SGLang 0.5.21, `--reasoning-parser qwen3 --context-length 65536`, one L40S; the same sampling as `qwen27-ar4`; `enable_thinking: False` | 91.5% (14 / 132) / 90.7% (9 / 62) |
+
+Recorded caveats:
+
+- The library decided "No FP8 preset" (`API.md:262`). This repo defines one on the user's decision of 2026-11-02.
+- The with-source limit was measured on `qwen27-ar4` (88.9% against 94.4%). Stop 56 found a similar gap on FP8 with
+  `notes2`. It was not measured for Gemma.
+
+### Replay check (step 1b)
+
+The replay script was a scratch script following `tests/test_judge_replay.py`, with `_cell` copied unchanged. It was
+not kept in either repo.
+
+Command:
+
+```sh
+cd legal-rag-verifier && uv run python replay_local.py
+```
+
+| Preset | Set | Reply | Unknown prompts | Correct / units | False rollbacks / caught | Result |
+|---|---|---|---:|---|---|---|
+| `gemma4-e4b` | fresh | short | 0 | 306/354 | 16 / 116 | PASS |
+| `gemma4-e4b` | fresh2 | short | 0 | 129/151 | 9 / 54 | PASS |
+| `qwen27-nothink` | fresh | full | 0 | 324/354 | 14 / 132 | PASS |
+| `qwen27-nothink` | fresh2 | full | 0 | 137/151 | 9 / 62 | PASS |
+
+Both local presets are marked measured.
+
+### 6. Git
+
+Commit 0.1.0 on `main`, then work on branch `judge-mode`. Nothing is pushed. The GitHub repo does not exist yet;
+creating it is step 6 ⛔.
+
+### Other design decisions
+
+Design decision D-b: `open_world_hint=true` on `check_answer` only. `resolve_uk_citation` makes no network call.
+
 ## Design
 
 **Flags**, each with an environment variable of the same meaning:
@@ -42,10 +117,10 @@ to their sources.
 |---|---|
 | `--judge-url` | Base URL of an OpenAI-compatible server (SGLang, vLLM or a hosted API) |
 | `--judge-model` | Model name the server expects |
-| `--judge-preset` | A measured preset from `legal_rag_verifier.judge.PRESETS`. It sets the sampling, template arguments and reply form |
+| `--judge-preset` | A measured preset from the library's `PRESETS` plus the two local ones in `src/answer_check_mcp/presets.py`. It sets the sampling, template arguments and reply form |
 | `--judge-api-key-env` | Name of the environment variable holding the key. The key itself is never a flag |
 | `--judge-timeout` | Seconds per call, default 30 |
-| `--judge-max-calls` | Cap on judge calls per `check_answer`, default 40. Sentences past the cap come back `unchecked` with a detail saying why |
+| `--judge-max-calls` | Cap on judge calls per `check_answer`, default 40. Past the cap the claim check still runs, with a detail saying why |
 
 **Output.** Fields are added, none removed:
 
