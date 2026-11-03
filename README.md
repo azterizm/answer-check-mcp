@@ -27,7 +27,7 @@ The held-out set is UK law only. The check reads numbers, money, percentages, da
 With Claude Code:
 
 ```bash
-claude mcp add answer-check -- uvx --from git+https://github.com/azterizm/answer-check-mcp answer-check-mcp
+claude mcp add answer-check -- uvx answer-check-mcp
 ```
 
 Any other MCP host takes the same command in its server configuration:
@@ -37,7 +37,7 @@ Any other MCP host takes the same command in its server configuration:
   "mcpServers": {
     "answer-check": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/azterizm/answer-check-mcp", "answer-check-mcp"]
+      "args": ["answer-check-mcp"]
     }
   }
 }
@@ -57,7 +57,7 @@ Each source can carry a `title` (the Act it comes from) and a `citation` (the pr
 To turn on `resolve_uk_citation`, download the index as the router's README describes, then:
 
 ```bash
-uvx --from git+https://github.com/azterizm/answer-check-mcp --with legal-rag-router answer-check-mcp --uk-index data/index
+uvx --with legal-rag-router answer-check-mcp --uk-index data/index
 ```
 
 ## Judge mode
@@ -106,13 +106,13 @@ python -m sglang.launch_server \
   --mem-fraction-static 0.85 \
   --port 30000
 
-claude mcp add answer-check -- uvx --from git+https://github.com/azterizm/answer-check-mcp answer-check-mcp --judge-url http://localhost:30000
+claude mcp add answer-check -- uvx answer-check-mcp --judge-url http://localhost:30000
 ```
 
 Hosted API variant:
 
 ```bash
-claude mcp add answer-check -- uvx --from git+https://github.com/azterizm/answer-check-mcp answer-check-mcp --judge-url https://api.example.com --judge-model model-name --judge-api-key-env ANSWER_CHECK_JUDGE_API_KEY
+claude mcp add answer-check -- uvx answer-check-mcp --judge-url https://api.example.com --judge-model model-name --judge-api-key-env ANSWER_CHECK_JUDGE_API_KEY
 ```
 
 The variable named by `--judge-api-key-env` must be set in the server's environment (for Claude Code, `claude mcp add -e ANSWER_CHECK_JUDGE_API_KEY=...`); the key never appears in output or errors.
