@@ -9,6 +9,7 @@ import urllib.error
 import urllib.request
 from collections.abc import Sequence
 from dataclasses import dataclass, replace
+from importlib.metadata import version
 from pathlib import Path
 from typing import Any, Literal, cast
 
@@ -492,7 +493,11 @@ def build_server(uk_index: Path | None = None, judge: JudgeSettings | None = Non
     """The server. ``resolve_uk_citation`` is registered only when a UK index is given."""
     if judge is not None:
         _probe(judge)
-    server = MCPServer("answer-check", instructions=JUDGE_INSTRUCTIONS if judge else INSTRUCTIONS)
+    server = MCPServer(
+        "answer-check",
+        version=version("answer-check-mcp"),
+        instructions=JUDGE_INSTRUCTIONS if judge else INSTRUCTIONS,
+    )
     annotations = JUDGE_READ_ONLY if judge else READ_ONLY
     tool_kwargs: dict[str, Any] = {"annotations": annotations}
     if judge is not None:

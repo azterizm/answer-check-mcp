@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import shutil
+from importlib.metadata import version
 
 import pytest
 from mcp import Client, StdioServerParameters
@@ -46,3 +47,15 @@ async def test_the_installed_command_judges_over_stdio(judge_stub) -> None:
     assert result.structured_content is not None
     assert result.structured_content["sentences"][0]["checked_by"] == "judge"
     assert result.structured_content["judge"]["measured"] is True
+
+
+async def test_the_installed_command_reports_its_package_version() -> None:
+    command = shutil.which("answer-check-mcp")
+    assert command, "install the package first: uv sync"
+
+    async with Client(StdioServerParameters(command=command)) as client:
+        info = client.server_info
+
+    assert info is not None
+    assert info.name == "answer-check"
+    assert info.version == version("answer-check-mcp")

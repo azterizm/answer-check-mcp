@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-11-03
+
+### Fixed
+- The server reported an empty version in its MCP `serverInfo`. It now reports the installed
+  package version.
+
 ## [0.2.0] - 2026-11-03
 
 ### Added
@@ -41,5 +47,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - stdio MCP launch.
 - Bounded inputs: answer up to 20,000 characters and up to 50 sources with 200,000 characters total.
 
+[0.2.1]: https://github.com/azterizm/answer-check-mcp/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/azterizm/answer-check-mcp/compare/0cd3d98...v0.2.0
 [0.1.0]: https://github.com/azterizm/answer-check-mcp/tree/0cd3d98
