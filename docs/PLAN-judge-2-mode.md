@@ -1,6 +1,6 @@
 # Plan, phase 2 of 3: an optional judge mode (0.2.0)
 
-Status: written 2026-11-01; decisions taken 2026-11-02; work in progress on branch `judge-mode`.
+Status: written 2026-11-01; decisions taken 2026-11-02; steps 1–7 done (6: repo created and PR #1 merged on 2026-11-02; 7: the live smoke passed, see the testing plan).
 It depends on phase 1, the judge module in `legal-rag-verifier` 0.5.0
 (`legal-rag-verifier/docs/PLAN-judge-1-module.md`). This repository's tests are in
 `docs/PLAN-judge-3-testing.md`.
